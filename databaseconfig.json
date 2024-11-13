@@ -1,0 +1,10 @@
+{
+  apiKey: "AIzaSyD764k1Gvvxx9ATP98dkNsI3BedkOOWoms",
+  authDomain: "smartparkingsystema4.firebaseapp.com",
+  databaseURL: "https://smartparkingsystema4-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smartparkingsystema4",
+  storageBucket: "smartparkingsystema4.firebasestorage.app",
+  messagingSenderId: "73622983841",
+  appId: "1:73622983841:web:54ac0b48a79dabe6cb0ce0",
+  measurementId: "G-F3BZFBXLQG"
+};

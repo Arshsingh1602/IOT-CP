@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Parking Spots</title>
+    <!-- Firebase App (required) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database (required for Realtime Database) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+
+<body>
+    <h1>Available Parking Spots</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Parking Area</th>
+                <th>Spot</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="data-display"></tbody>
+    </table>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD764k1Gvvxx9ATP98dkNsI3BedkOOWoms",
+            authDomain: "smartparkingsystema4.firebaseapp.com",
+            databaseURL: "https://smartparkingsystema4-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "smartparkingsystema4",
+            storageBucket: "smartparkingsystema4.firebasestorage.app",
+            messagingSenderId: "73622983841",
+            appId: "1:73622983841:web:54ac0b48a79dabe6cb0ce0"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Reference to parking spot data
+        const parkingDataRef = database.ref('parking_spots');
+
+        // Function to update spot status to occupied
+        function markAsOccupied(areaName, spotName) {
+            const spotRef = database.ref(`parking_spots/${areaName}/${spotName}`);
+            spotRef.update({ isOccupied: true })
+                .then(() => {
+                    alert(`Spot ${spotName} in ${areaName} is now occupied.`);
+                })
+                .catch((error) => {
+                    console.error("Error updating data: ", error);
+                });
+        }
+
+        // Fetch and display available parking spots
+        parkingDataRef.on('value', (snapshot) => {
+            const dataDisplay = document.getElementById('data-display');
+            dataDisplay.innerHTML = ''; // Clear previous data
+
+            snapshot.forEach((areaSnapshot) => {
+                const areaName = areaSnapshot.key; // e.g., "P1", "P2"
+
+                areaSnapshot.forEach((spotSnapshot) => {
+                    const spotName = spotSnapshot.key; // e.g., "spot1", "spot2"
+                    const isOccupied = spotSnapshot.val().isOccupied; // true or false
+
+                    // Display only if the spot is not occupied
+                    if (!isOccupied) {
+                        const row = document.createElement('tr'); // Create a new table row
+
+                        // Create cells for area and spot
+                        const areaCell = document.createElement('td');
+                        areaCell.textContent = areaName;
+                        row.appendChild(areaCell);
+
+                        const spotCell = document.createElement('td');
+                        spotCell.textContent = spotName;
+                        row.appendChild(spotCell);
+
+                        // Create a cell for the action button
+                        const actionCell = document.createElement('td');
+                        const button = document.createElement('button');
+                        button.textContent = 'Mark as Occupied';
+                        button.onclick = () => markAsOccupied(areaName, spotName); // Set the button's action
+                        actionCell.appendChild(button);
+                        row.appendChild(actionCell);
+
+                        dataDisplay.appendChild(row); // Append the row to the table body
+                    }
+                });
+            });
+        }, (error) => {
+            console.error("Error fetching data: ", error);
+        });
+    </script>
+</body>
+
+</html>
